@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:crud="http://java.sun.com/jsf/composite/crud"
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xml:lang="en" lang="en">
+<body>
+<ui:composition template="layout/mainTemplate.xhtml">
+
+    <ui:define name="title">Order</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="false"/>
+
+            <crud:crudFunctions id="crudFunctions" bean="#{orderCRUDMbean}" onCompleShowDialog="PF('orderDialog').show()"
+                                onCompleUpdate="@([id$=orderForm])"/>
+
+            <p:dataTable id="table" paginator="true" value="#{orderCRUDMbean.list}" var="order"
+                         selectionMode="single" selection="#{orderCRUDMbean.selectedEntity}" rowKey="#{order.id}"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+                <p:ajax event="rowSelect" update="@form"/>
+                <p:column toggleable="false" sortBy="#{order.id}" filterBy="#{order.id}" filterMatchMode="contains"
+                          headerText="ID">
+                    <h:outputText value="#{order.id}"/>
+                </p:column>
+                <p:column sortBy="#{order.deliveryDate}" filterBy="#{order.deliveryDate}" headerText="Kiszállítás dátuma" filterMatchMode="contains">
+                    <h:outputText value="#{order.deliveryDate}"/>
+                </p:column>
+                <p:column sortBy="#{order.city}" filterBy="#{order.city}" headerText="Település" filterMatchMode="contains">
+                    <h:outputText value="#{order.city}"/>
+                </p:column>
+                <p:column sortBy="#{order.street}" filterBy="#{order.street}" headerText="Közterület" filterMatchMode="contains">
+                    <h:outputText value="#{order.street}"/>
+                </p:column>
+                <p:column sortBy="#{order.streetType}" filterBy="#{order.streetType}" headerText="Közterület jellege" filterMatchMode="contains">
+                    <h:outputText value="#{order.streetType}"/>
+                </p:column>
+                <p:column sortBy="#{order.houseNumber}" filterBy="#{order.houseNumber}" headerText="Házszám"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{order.houseNumber}"/>
+                </p:column>
+                <p:column sortBy="#{order.pizzaList}" filterBy="#{order.pizzaList}" headerText="Pizzák"
+                          filterMatchMode="contains">
+                    <ui:repeat value="#{order.pizzaList}" var="pizza" varStatus="loop">
+                        <h:outputText value="#{pizza.name}#{not loop.last ? ',' : ''} "/>
+                    </ui:repeat>
+                </p:column>
+                <p:column sortBy="#{order.courier}" filterBy="#{order.courier}" headerText="Futár"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{order.courier.firstName} #{order.courier.lastName}"/>
+                </p:column>
+                <p:column sortBy="#{order.modifiedDate}" filterBy="#{order.modifiedDate}" headerText="Módosítás Dátuma"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{order.modifiedDate}"/>
+                </p:column>
+                <p:column sortBy="#{order.creatorUser.username}" filterBy="#{order.creatorUser.username}" headerText="Létrehozó felhasználó"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{order.creatorUser.username}"/>
+                </p:column>
+                <p:column sortBy="#{order.modifierUser}" filterBy="#{order.modifierUser.username}" headerText="Módosító felhasználó"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{order.modifierUser.username}"/>
+                </p:column>
+
+            </p:dataTable>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="Nem" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                <p:commandButton value="Igen" type="button" styleClass="ui-confirmdialog-yes"/>
+            </p:confirmDialog>
+        </h:form>
+
+        <p:dialog id="orderDialog" widgetVar="orderDialog" header="Form" modal="true" closable="true">
+            <h:form id="orderForm">
+                <p:panelGrid layout="grid" columns="2" id="formPanel" style="width: 400px">
+                    <p:outputLabel for="time" value="Kiszállítás dátuma"/>
+                    <p:datePicker id="time" value="#{orderCRUDMbean.selectedEntity.deliveryDate}" showTime="true"/>
+
+                    <p:outputLabel value="Település"/>
+                    <p:inputText value="#{orderCRUDMbean.selectedEntity.city}" required="true" maxlength="200"
+                                 requiredMessage="Leírás kötelező"/>
+
+                    <p:outputLabel value="Közterület"/>
+                    <p:inputText value="#{orderCRUDMbean.selectedEntity.street}" required="true" maxlength="200"
+                                 requiredMessage="Közterület kötelező"/>
+
+                    <p:outputLabel value="Közterület típusa"/>
+                    <p:selectOneMenu value="#{orderCRUDMbean.selectedEntity.streetType}">
+                        <f:selectItem itemValue="#{null}" itemLabel="Kérem válasszon"/>
+                        <f:selectItem itemValue="utca" itemLabel="utca" />
+                        <f:selectItem itemValue="köz" itemLabel="köz" />
+                        <f:selectItem itemValue="lugas" itemLabel="lugas" />
+                        <f:selectItem itemValue="tér" itemLabel="tér" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Házszám"/>
+                    <p:inputText value="#{orderCRUDMbean.selectedEntity.houseNumber}" required="true" maxlength="200"
+                                 requiredMessage="Házszám kötelező"/>
+
+                    <p:outputLabel value="Pizzák"/>
+                    <p:selectManyMenu value="#{orderCRUDMbean.selectedPizzaStrings}">
+                        <f:selectItems value="#{orderCRUDMbean.pizzaList}" var="pizza" itemLabel="#{pizza.name}"
+                                       itemValue="#{pizza.name}"/>
+                    </p:selectManyMenu>
+
+                    <p:outputLabel value="Futár"/>
+                    <p:selectOneMenu value="#{orderCRUDMbean.selectedEntity.courier}" converter="#{courierConverter}">
+                        <f:selectItem itemValue="#{null}" itemLabel="Kérem válasszon"/>
+                        <f:selectItems value="#{orderCRUDMbean.courierList}" var="courier" itemLabel="#{courier.firstName} #{courier.lastName}"
+                                       itemValue="#{courier}"/>
+                    </p:selectOneMenu>
+
+                    <p:commandButton value="Mentés" icon="pi pi-save" actionListener="#{orderCRUDMbean.save()}"
+                                     process="formPanel" update=":form"/>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+</body>
+</html>

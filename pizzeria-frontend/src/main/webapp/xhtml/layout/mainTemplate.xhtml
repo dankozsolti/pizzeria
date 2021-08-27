@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+
+      xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core" xml:lang="en" lang="en">
+<h:head>
+    <title><ui:insert name="title"/></title>
+</h:head>
+<h:body>
+
+    <ui:insert name="menuBar">
+        <h:form id="menubarForm">
+            <p:menubar model="#{menuProviderBean.getMenuModel()}">
+                <f:facet name="options">
+                    <p:commandButton rendered="#{!loggedInUserBean.isLoggedIn()}" oncomplete="PF('loginDialog').show()"
+                                     value="Login" icon="pi pi-fw pi-sign-in"
+                                     styleClass="ui-button-info"/>
+                    <p:outputLabel rendered="#{loggedInUserBean.isLoggedIn()}"
+                                   value="#{loggedInUserBean.model.username}"/>
+
+                    <p:commandButton actionListener="#{loginRequestBean.doLogout()}" rendered="#{loggedInUserBean.isLoggedIn()}" value="Logout" icon="pi pi-fw pi-sign-out"
+                              styleClass="ui-button-info" update="@form  @([id$=crudFunctionToolbar])"/>
+                </f:facet>
+            </p:menubar>
+        </h:form>
+        <p:dialog header="Login" modal="true" widgetVar="loginDialog" id="loginDialog">
+            <h:form>
+                <p:outputLabel value="Username"/>
+                <p:inputText value="#{loginRequestBean.model.username}"/>
+                <br/>
+                <p:outputLabel value="Password"/>
+                <p:password value="#{loginRequestBean.model.password}"/>
+
+                <p:separator/>
+                <p:commandButton value="Login" actionListener="#{loginRequestBean.doLogin}" update="@([id$=menubarForm])  @([id$=crudFunctionToolbar])"/>
+            </h:form>
+        </p:dialog>
+    </ui:insert>
+    <ui:insert name="content"/>
+    <ui:insert name="footer">
+        Fake Pizzeria ©
+    </ui:insert>
+</h:body>
+</html>

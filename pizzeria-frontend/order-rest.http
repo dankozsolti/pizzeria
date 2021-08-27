@@ -1,0 +1,9 @@
+GET http://localhost:8080/api/order
+Accept: application/json
+
+###
+
+DELETE http://localhost:8080/api/order/2
+Accept: application/json
+
+###

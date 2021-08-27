@@ -1,0 +1,39 @@
+GET http://localhost:8080/api/pizza
+Accept: application/json
+
+###
+
+POST http://localhost:8080/api/pizza
+Content-Type: application/json
+
+{
+  "createdDate": "2016-07-14 21:00:00",
+  "creatorUserId": 1,
+  "id": 5,
+  "modifiedDate": "2016-07-14 01:00:00",
+  "modifierUserId": 1,
+  "description": "very very nice cheesy pizza",
+  "name": "cheesy pizza",
+  "price": 1250
+}
+
+###
+
+DELETE http://localhost:8080/api/pizza/3
+Accept: application/json
+
+###
+
+PUT http://localhost:8080/api/pizza
+Content-Type: application/json
+
+{
+  "createdDate": "2016-07-14 21:00:00",
+  "creatorUserId": 1,
+  "id": 2,
+  "modifiedDate": "2016-07-14 01:00:00",
+  "modifierUserId": 1,
+  "description": "not very nice cheesy pizza",
+  "name": "cheesy pizza",
+  "price": 1250
+}
